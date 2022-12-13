@@ -3,16 +3,33 @@ import './css/Gnb.css'
 
 class Gnb extends Component {
     render(){
-        var aaa = [<p>단락요소1입니다.</p>, <p>단락요소2입니다.</p>, <p>단락요소3입니다.</p>, <p>단락요소4입니다.</p>];
-        var bbb = <p>단락요소긔</p>;
 
         var lists = [];  
         var data = this.props.data;
         var i=0;
         
         while(i<data.length){
-            lists.push(<li key={data[i].id}><a href={data[i].id+".html"} title={data[i].desc}>{data[i].title}</a></li>);
-            i+=1;
+          lists.push(
+              <li key={data[i].id}>
+                  <a href={data[i].id+".html"} title={data[i].desc} 
+                    data-id={data[i].id} 
+                    onClick={function(e){
+                      e.preventDefault();
+                      this.props.onChangePage(e.target.dataset.id);
+                  }.bind(this)}
+                  >
+  
+                  {/* <a href={data[i].id+".html"} title={data[i].desc} 
+                    onClick={function(id, e){
+                      e.preventDefault();
+                      this.props.onChangePage(id);
+                  }.bind(this, data[i].id)}
+                  > */}
+  
+                      {data[i].title}
+                  </a>
+              </li>);
+          i+=1;
         }
 
      // for(i=0; i<data.length; i++){
@@ -22,11 +39,8 @@ class Gnb extends Component {
       return (
         <nav>
           <ul>
-              {lists}
+          {lists}
           </ul>
-          <div>{aaa[0]}</div>
-          <div>{aaa[1]}</div>
-          <div>{bbb}</div>
         </nav>
       );
     }
