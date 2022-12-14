@@ -1,0 +1,5 @@
+.App {
+  text-align: center;
+}
+
+.navbar-light .navbar-nav .nav-link.active { color: red;}
