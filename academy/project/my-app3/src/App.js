@@ -1,34 +1,35 @@
-
-import React, { useState } from 'react';
-import Navbar from './components/Navbar';
+import './App.css';
 import {
   BrowserRouter as Router , 
   Switch, 
-  Route,
-  Link
-} from 'react-router-dom';
-import Users from './pages/Users';  //추가
-import './App.css';
+  Route
+} from 'react-router-dom';  
 
-function App(){
-  return(
-    <Router>  
+import Navbar from './components/Navbar';
+import Users from './pages/Users'; 
+import Movies from './pages/Movies';    //추가한다
+
+
+function App() {
+  return (
+    <Router>
       <div className="App">
         <Navbar />
-        <Switch>
-          <Route path="/" exact>
-              <h1>Home page 입니다</h1>
-          </Route>
-          <Route path="/movies">
-              <h1>Movies page 입니다</h1>
-          </Route>
-          <Route path="/users">
+      <Switch>
+        <Route path="/" exact>
+              <h1>Home 입니다</h1>
+        </Route>
+        <Route path="/movies">
+            <Movies />
+        </Route>
+        <Route path="/users">
             <Users />
-          </Route>
-        </Switch>
+        </Route>
+      </Switch>  
+
       </div>
     </Router>
-  )
-};
+  );
+}
 
 export default App;
