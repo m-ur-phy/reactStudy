@@ -261,4 +261,486 @@ export default function Hello() {
 }}/>
 ```
 
-이런식으로 짧게 써줄수도 있다.
+- 이런식으로 짧게 써줄수도 있다.
+
+- 또한 이렇게 작성해줄수도 있다.
+
+```jsx
+export default function Hello() {
+    function showText(txt) {
+        console.log(txt)
+    }
+    return (
+        <>
+        <h1>Hello</h1>
+        <input type="text" onChange={ e => {
+            const txt = e.target.value;
+            showText(txt);
+        }}/>
+        </>
+    )
+}
+```
+
+## 7. state, useState
+
+- state 란? 컴포넌트가 가지고 있는, 관리하는 상태값이다.
+
+```jsx
+export default function Hello() {
+    let name = "Murphy"; // 일반 변수
+
+    function changeName() {
+        name = name === "Murphy" ? "Harry" : "Murphy"; // murphy 일땐 harry로, harry 일땐 murphy로
+        console.log(name);
+        document.getElementById("name").innerText = name; // DOM 을 업데이트 해주는 javascript code
+    }
+    return (
+        <>
+            <h1>Hello</h1>
+            <h2 id="name">{name}</h2>
+            <button onClick={changeName}>Change</button>
+        </>
+    )
+}
+```
+
+- 위의 예제를 살펴보면 click 이벤트를 전달해 줄 때 일반 변수에 변화를 주는 것이기 때문에 리액트가 바로 인지 할 수 없다. 그래서 document.get~ 을 이용하여 바꿔주어야 한다.
+- 그렇다면 어떻게 바로 변화를 감지하여 적용되는 state 함수를 만들 수 있을까?
+
+### useState
+
+- react의 Hook
+    - Hook 은 react 16.8 부터 사용가능하다.
+    - 초기 리액트는 state와 lifecycle 을 관리하기 위해선, 클래스형 컴포넌트를 이용하여 만들어야만 했다.
+    - 함수형 컴포넌트는 단순히 UI 표현에만 사용하였다.
+    - 16.8 이후부터는 함수형 컴포넌트가 Hook 을 이용하여 전부 관리할 수 있게 되었다.
+
+```jsx
+import { useState } from "react"; // 꼭 import 를 해주어야 useState 를 사용할 수 있다.
+
+export default function Hello() {
+    // let name = "Murphy"; // 일반 변수
+    const [name, setName] = useState('Mike'); // 배열의 첫번째 값은 state(변수명) 두번째 값은 state 를 변경해주는 함수 (배열 구조분해)
+
+    function changeName() {
+        const newName = name === "Murphy" ? "Harry" : "Murphy"; // murphy 일땐 harry로, harry 일땐 murphy로
+        setName(newName);
+        // document.getElementById("name").innerText = name;
+    }
+    return (
+        <>
+            <h1>Hello</h1>
+            <h2 id="name">{name}</h2>
+            <button onClick={changeName}>Change</button>
+        </>
+    )
+}
+```
+
+- `import { useState } from "react";` 꼭 import 를 해주어야 useState 를 사용할 수 있다.
+- useState 를 선언할 때는 배열의 구조분해할당을 사용한다.
+- `const [name, setName] = useState();` 배열의 첫번째 값은 state(변수명) 이고, 두번째 값은 state 를 변경해주는 함수이다.
+
+```jsx
+import { useState } from "react"; // 꼭 import 를 해주어야 useState 를 사용할 수 있다.
+
+export default function Hello() {
+    // let name = "Murphy"; // 일반 변수
+    const [name, setName] = useState('Mike'); // 배열의 첫번째 값은 state(변수명) 두번째 값은 state 를 변경해주는 함수 (배열 구조분해)
+
+    function changeName() {
+        setName(name === "Murphy" ? "Harry" : "Murphy");
+        // document.getElementById("name").innerText = name;
+    }
+    return (
+        <>
+            <h1>Hello</h1>
+            <h2 id="name">{name}</h2>
+            <button onClick={changeName}>Change</button>
+        </>
+    )
+}
+```
+
+- 이렇게도 작성해줄 수 있다.
+
+```jsx
+import { useState } from "react"; // 꼭 import 를 해주어야 useState 를 사용할 수 있다.
+
+export default function Hello() {
+    // let name = "Murphy"; // 일반 변수
+    const [name, setName] = useState('Mike'); // 배열의 첫번째 값은 state(변수명) 두번째 값은 state 를 변경해주는 함수 (배열 구조분해)
+    return (
+        <>
+            <h1>Hello</h1>
+            <h2 id="name">{name}</h2>
+            <button onClick={() => {
+                setName(name === "Murphy" ? "Harry" : "Murphy");
+            }}>Change</button>
+        </>
+    )
+}
+```
+
+- 또 이렇게 onClick 이벤트 내에 바로 함수를 작성해줄 수도 있다.
+
+(App.js)
+
+```jsx
+function App() {
+
+  return (
+    <div className="App">
+      <Hello />
+      <Hello />
+      <Hello />
+    </div>
+  );
+}
+```
+
+- 동일한 컴포넌트를 불러와서 적용시키더라도, state는 따로 관리된다.
+
+## 8. props (properties)
+
+- 프로퍼티의 속성값
+
+(App.js)
+
+```jsx
+import './App.css';
+import Hello from './component/Hello'
+
+function App() {
+
+  return (
+    <div className="App">
+      <Hello age={10} />
+      <Hello age={20} />
+      <Hello age={30} />
+    </div>
+  );
+}
+
+export default App;
+```
+
+- 값을 넘겨준다.
+
+(Hello.js)
+
+```jsx
+import { useState } from "react"; 
+
+export default function Hello(props) { // 전달해준 값이 들어온다
+    console.log(props)
+    const [name, setName] = useState('Mike'); 
+    return (
+        <>
+            <h1 id="name">{name}({props.age}세)</h1>
+            <button onClick={() => {
+                setName(name === "Murphy" ? "Harry" : "Murphy");
+            }}>Change</button>
+        </>
+    )
+}
+```
+
+- 전달 값이 들어온다. 주의할 점은 전달 값은 컴포넌트 내부에서 바꿀 수 없다.
+- 만약 값을 변경하고 싶다면 컴포넌트 내부에서 state 를 다시 만들어야 한다.
+
+```jsx
+import { useState } from "react"; 
+
+export default function Hello(props) { // 전달해준 값이 들어온다
+    const [name, setName] = useState('Mike'); 
+    const [age, setAge] = useState(props.age); // 받아온 props 를 변경해주기 위한 새로운 state
+    return (
+        <>
+            <h1 id="name">{name}({age}세)</h1>
+            <button onClick={() => {
+                setName(name === "Murphy" ? "Harry" : "Murphy");
+                setAge(age + 1);
+            }}>Change</button>
+        </>
+    )
+}
+```
+
+- 받아온 props 를 변경해주기위한 새로운 state 를 생성하고, 해당 값에 변경시 적용할 수식을 작성해주면 된다.
+- 해당 코드는 클릭시마다 age 값이 1 씩 증가한다.
+
+```jsx
+import { useState } from "react"; 
+
+export default function Hello({age}) { // 전달해준 값이 들어온다
+    const [name, setName] = useState('Mike'); 
+    return (
+        <>
+            <h1 id="name">{name}({age})</h1>
+            <button onClick={() => {
+                setName(name === "Murphy" ? "Harry" : "Murphy");
+            }}>Change</button>
+        </>
+    )
+}
+```
+
+- 전달하는 값이 age 하나이기 때문에 age 라고만 전달해 주어도 된다.
+
+```jsx
+import { useState } from "react"; 
+
+export default function Hello({age}) { // 전달해준 값이 들어온다
+    const [name, setName] = useState('Mike'); 
+    const msg = age > 19 ? '성인입니다' : '미성년자 입니다';
+    return (
+        <>
+            <h1 id="name">{name}{age} : {msg}</h1>
+            <button onClick={() => {
+                setName(name === "Murphy" ? "Harry" : "Murphy");
+            }}>Change</button>
+        </>
+    )
+}
+```
+
+- 들어온 값으로 조건식을 작성하여 결과를 출력할 수도 있다.
+
+- state 와 props 는 굉장히 많이 사용된다.
+- 화면의 데이터를 갱신하기 위해서는 두 가지를 필수적으로 사용한다.
+- 한 컴포넌트가 가지고 있는 state 를 props 로 넘길수도 있다.
+
+(component > UserName.js 생성)
+
+```jsx
+export default function UserName({name}) {
+    return <p>Hello, {name}</p>
+}
+```
+
+(Hello.js)
+
+```jsx
+import { useState } from "react"; 
+import UserName from "./UserName";
+
+export default function Hello({age}) { // 전달해준 값이 들어온다
+    const [name, setName] = useState('Mike'); 
+    const msg = age > 19 ? '성인입니다' : '미성년자 입니다';
+    return (
+        <>
+            <h1 id="name">{name}{age} : {msg}</h1>
+            <UserName name={name}></UserName>
+            <button onClick={() => {
+                setName(name === "Murphy" ? "Harry" : "Murphy");
+            }}>Change</button>
+        </>
+    )
+}
+```
+
+- 여기서 name 은 이 Hello의 컴포넌트에서는 state 지만,
+- UserName 컴포넌트 입장에서는 props 이다.
+- 이런식으로 페이지를 완성해나가면 된다.
+
+## 9. 더미 데이터 구현, map() 반복문
+
+- 전부 리셋하고 본격적으로 단어장을 만들어보자!
+
+(component > Header.js 생성)
+
+```jsx
+export default function Header() {
+    return <div className="header">
+        <h1>
+            <a href="#">토익 영단어(고급)</a>
+        </h1>
+        <div className="menu">
+            <a href="#" className="link">Day 추가</a>
+            <a href="#" className="link">단어 추가</a>
+        </div>
+    </div>;
+}
+```
+
+(App.js)
+
+```jsx
+import Header from "./component/Header";
+
+function App() {
+  return <div className='App'>
+    <Header />
+  </div>
+}
+
+export default App;
+```
+
+(src > db(생성) > data.json(생성))
+
+```jsx
+{
+    "days": [
+      {
+        "id": 1,
+        "day": 1
+      },
+      {
+        "id": 2,
+        "day": 2
+      },
+      {
+        "id": 3,
+        "day": 3
+      },
+      {
+        "id": 4,
+        "day": 4
+      }
+    ],
+    "words": [
+      {
+        "id": 1,
+        "day": 1,
+        "eng": "book",
+        "kor": "책",
+        "isDone": false
+      },
+      {
+        "id": 3,
+        "day": 2,
+        "eng": "car",
+        "kor": "자동차",
+        "isDone": false
+      },
+      {
+        "id": 5,
+        "day": 3,
+        "eng": "school",
+        "kor": "학교",
+        "isDone": false
+      },
+      {
+        "id": 6,
+        "day": 3,
+        "eng": "pencil",
+        "kor": "연필",
+        "isDone": false
+      },
+      {
+        "day": "3",
+        "eng": "window",
+        "kor": "창문",
+        "isDone": false,
+        "id": 7
+      },
+      {
+        "day": "3",
+        "eng": "house",
+        "kor": "집",
+        "isDone": false,
+        "id": 8
+      },
+      {
+        "day": "2",
+        "eng": "mouse",
+        "kor": "쥐",
+        "isDone": false,
+        "id": 9
+      },
+      {
+        "day": "4",
+        "eng": "monkey",
+        "kor": "원숭이",
+        "isDone": false,
+        "id": 10
+      },
+      {
+        "day": "4",
+        "eng": "apple",
+        "kor": "사과",
+        "isDone": false,
+        "id": 11
+      },
+      {
+        "day": "3",
+        "eng": "apple",
+        "kor": "사과",
+        "isDone": false,
+        "id": 12
+      }
+    ]
+  }
+```
+
+- 영단어 데이터를 작성해준다.
+
+(component > DayList.js)
+
+```jsx
+import dummy from "../db/data.json";
+
+export default function DayList() {
+    console.log(dummy);
+    return <ul className="list_day">
+        {dummy.days.map(day => (
+            <li key={day.id}>
+                Day {day.day}
+            </li>
+        ))}
+    </ul>
+}
+```
+
+- map() 함수는 배열을 받아서 또다른 배열을 반환해주는데, 이때반환되는 요소는 jsx 로 작성해주면 된다.
+
+(component > Day.js)
+
+```jsx
+import dummy from "../db/data.json";
+
+export default function Day() {
+    // dummy.words
+    const day = 1;
+    const wordList = dummy.words.filter(word => (
+        word.day === day
+    ));
+    console.log(wordList)
+
+    return <>
+    <table>
+        <tbody>
+            {wordList.map(word => (
+            <tr key={word.id}> 
+                <td>
+                    {word.eng}
+                </td>
+                <td>{word.kor}</td>
+            </tr>
+            ))}
+        </tbody>
+    </table>
+    </>;
+}
+```
+
+(App.js)
+
+```jsx
+import Header from "./component/Header";
+import DayList from "./component/DayList";
+import Day from "./component/Day";
+
+function App() {
+  return <div className='App'>
+    <Header />
+    <DayList />
+    <Day />
+  </div>
+}
+
+export default App;
+```
