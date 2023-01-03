@@ -744,3 +744,55 @@ function App() {
 
 export default App;
 ```
+
+## 10. ****라우터 구현 react-router-dom****
+
+`npm install react-router-dom`
+- 현재 강의에선 v5 버전이기 때문에, 위 버전이 아니라 다음과 같이 설치하고 진행하였다.
+- (v5도 공부해놓으면 좋을 듯 하여 ㅎㅎ)
+`npm install react-router-dom@5.2.0`
+
+(component > EmptyPage.js(생성))
+```jsx
+import { Link } from "react-router-dom";
+
+export default function EmptyPage() {
+    return (
+        <>
+            <h2>잘못된 접근입니다.</h2>
+            <Link to="/"> 돌아가기 </Link>
+        </>
+    )
+}
+```
+- EmptyPage 즉, 잘못된 접근창은 다음과 같이 App.js에 맨 아래 라우터로 구성해주어야 한다.
+- 아니면 전부 해당 페이지로 이동한다.
+
+(App.js)
+```jsx
+function App() {
+    return (
+    <BrowserRouter>
+      <div className='App'>
+        <Header />
+        <Switch>
+          <Route exact path="/">
+            <DayList />
+          </Route>
+          <Route path="/day/:day">
+            <Day />
+          </Route>
+          <Route>
+            <EmptyPage />
+          </Route>
+        </Switch>
+      </div>
+    </BrowserRouter>
+    )
+}
+
+export default App;
+```
+
+- 현재 Switch 는 Routes로 바뀌었다.
+
