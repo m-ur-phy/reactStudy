@@ -796,3 +796,176 @@ export default App;
 
 - 현재 Switch 는 Routes로 바뀌었다.
 
+## 11. json-server, REST API
+
+(day.js)
+```jsx
+import dummy from "../db/data.json";
+import { useParams } from "react-router-dom";
+
+export default function Day() {
+    const { day } = useParams();
+    const wordList = dummy.words.filter(word => (
+        word.day === Number(day)
+    ));
+
+    return (<>
+    <h2>Day {day}</h2>
+    <table>
+        <tbody>
+            {wordList.map(word => (
+            <tr key={word.id}> 
+                <td>
+                    <input type="checkbox" />
+                </td>
+                <td>
+                    {word.eng}
+                </td>
+                <td>{word.kor}</td>
+                <td>
+                    <button>뜻 보기</button>
+                    <button class="btn_del">삭제</button>
+                </td>
+            </tr>
+            ))}
+        </tbody>
+    </table>
+    </>
+    );
+}
+```
+- 뜻 보기 기능은 단어에만 적용되는 부분이기 때문에 따로 컴포넌트를 만들어준다.
+
+(component > Word.js(생성))
+```jsx
+export default function Word({word}) {
+    
+    return(
+        <tr> 
+                <td>
+                    <input type="checkbox" />
+                </td>
+                <td>
+                    {word.eng}
+                </td>
+                <td>{word.kor}</td>
+                <td>
+                    <button>뜻 보기</button>
+                    <button class="btn_del">삭제</button>
+                </td>
+        </tr>
+    )
+}
+```
+
+(Day.js)
+```jsx
+import dummy from "../db/data.json";
+import { useParams } from "react-router-dom";
+import Word from "./Word";
+
+export default function Day() {
+    const { day } = useParams();
+    const wordList = dummy.words.filter(word => (
+        word.day === Number(day)
+    ));
+
+    return (<>
+    <h2>Day {day}</h2>
+    <table>
+        <tbody>
+            {wordList.map(word => (
+            <Word word={word} key={word.id}/>
+            ))}
+        </tbody>
+    </table>
+    </>
+    );
+}
+```
+- Day.js 는 다음과 같이 만들어 준다.
+- Word 의 props 로 word 를 넘겨주고, 키 값은 word.id 로 설정해준다.
+- 키 값을 word에 설정해줌으로써 이전에 있던 tr 태그에 있던 key 값은 작성해줄 필요가 없어졌다.
+
+(Word.js)
+```jsx
+import { useState } from "react";
+
+export default function Word({word}) {
+    const [isShow, setIsShow] = useState(false);
+    function toggleShow(){
+        setIsShow(!isShow)
+    }
+    return(
+        <tr> 
+                <td>
+                    <input type="checkbox" />
+                </td>
+                <td>
+                    {word.eng}
+                </td>
+                <td>{isShow && word.kor}</td>
+                <td>
+                    <button onClick={toggleShow}>뜻 {isShow ? "숨기기" : "보기"}</button>
+                    <button class="btn_del">삭제</button>
+                </td>
+        </tr>
+    )
+}
+```
+- 뜻 보기와 숨기기 구현
+- 먼저 isShow state 를 만들어준다.
+- toggleShow 함수를 생성하여 !(not) 을 이용한 toggle 을 만들어준다.
+
+### 체크시 외운단어 / 못외운 단어 구분해보기 
+
+(Word.js)
+```jsx
+import { useState } from "react";
+
+export default function Word({word}) {
+    const [isShow, setIsShow] = useState(false);
+    const [isDone, setIsDone] = useState(word.isDone);
+    
+    function toggleShow(){
+        setIsShow(!isShow)
+    }
+
+    function toggleDone() {
+        setIsDone(!isDone)
+    }
+    return(
+        <tr className={isDone ? "off" : ""}> 
+                <td>
+                    <input type="checkbox" checked={isDone} onChange={toggleDone}/>
+                </td>
+                <td>
+                    {word.eng}
+                </td>
+                <td>{isShow && word.kor}</td>
+                <td>
+                    <button onClick={toggleShow}>뜻 {isShow ? "숨기기" : "보기"}</button>
+                    <button className="btn_del">삭제</button>
+                </td>
+        </tr>
+    )
+}
+```
+- 로직은 토글쇼와 동일하다 not 을 이용하여 체크면 true, 체크하지 않으면 false로 만들어 주어 onchange 시 변화를 적용해준다.
+- 변화를 적용하기 위해 word.isDone 도 state 로 만들어준다.
+
+### api
+`sudo npm i -g json-server`
+
+- Mac 에서 이렇게 불러오면 된다.
+- 설치가 완료되었다면 다시 다음의 명령어를 작성해준다.
+
+`json-server --watch ./src/db/data.jso
+n --port 3000` 
+
+### REST API 란?
+- 주소와 메서드로 CRUD 요청을 하는것이다.
+    - C : Create - POST
+    - R : Read - GET
+    - U : Update - PUT
+    - D : Delete - DELETE
